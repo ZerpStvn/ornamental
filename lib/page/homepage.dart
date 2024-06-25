@@ -26,7 +26,9 @@ class _HomePageState extends State<HomePage> {
     });
 
     if (imagepath != null) {
-      imageClassification();
+      setState(() {
+        imageClassification();
+      });
     }
   }
 
@@ -72,8 +74,23 @@ class _HomePageState extends State<HomePage> {
       ),
       body: SingleChildScrollView(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             imagepath != null ? Image.file(File(imagepath!.path)) : Container(),
+            _result != null
+                ? ListView.builder(
+                    itemCount: _result!.length,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return Row(
+                        children: [
+                          Expanded(
+                              child: Text(
+                                  "${_result![index]['label']}\n${_result![index]['confidence']}"))
+                        ],
+                      );
+                    })
+                : Container()
           ],
         ),
       ),
@@ -84,7 +101,7 @@ class _HomePageState extends State<HomePage> {
             onPressed: () {
               handlepickImagedata();
             },
-            child: Text("Pick Image")),
+            child: const Text("Pick Image")),
       ),
     );
   }

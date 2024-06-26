@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_tflite/flutter_tflite.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:ornamental/widget/panelgraph.dart';
 import 'package:ornamental/widget/pantpageview.dart';
 
 class ShowResult extends StatefulWidget {
@@ -18,7 +19,7 @@ class _ShowResultState extends State<ShowResult> {
   List? _result = [];
   bool isloading = false;
   String? errorMessage;
-
+  final ValueNotifier<int> _currentPageNotifier = ValueNotifier<int>(0);
   Future<void> loadModel() async {
     Tflite.close();
     await Tflite.loadModel(
@@ -59,6 +60,9 @@ class _ShowResultState extends State<ShowResult> {
     super.initState();
     initloadedimage();
     _pageController = PageController(initialPage: 0, viewportFraction: .75);
+    _pageController.addListener(() {
+      _currentPageNotifier.value = _pageController.page?.round() ?? 0;
+    });
   }
 
   void initloadedimage() {
@@ -101,7 +105,7 @@ class _ShowResultState extends State<ShowResult> {
         ],
       ),
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Container(
@@ -203,6 +207,11 @@ class _ShowResultState extends State<ShowResult> {
               widthsize: widthsize,
               pageController: _pageController,
               result: _result),
+          const SizedBox(height: 30),
+          Panelgraph(widthsize: widthsize),
+          // ValueListenableBuilder(valueListenable: _currentPageNotifier, builder: (context, current,_){
+          //   if(current)
+          // })
         ],
       ),
     );

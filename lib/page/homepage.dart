@@ -19,7 +19,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> handlepickImagedata() async {
     if (await _requestPermissions()) {
       final XFile? image = await _imagePicker.pickImage(
-        source: ImageSource.camera,
+        source: ImageSource.gallery,
         imageQuality: 60,
       );
 

@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_tflite/flutter_tflite.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ornamental/page/result.dart';
 import 'package:ornamental/widget/takephoto.dart';
@@ -29,16 +26,14 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return TakeaPhoto(
-      imageselected: () {
-        handlepickImagedata().then((value) {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ShowResult(selectedimage: imagepath!)));
-        });
-      },
-    );
+    return TakeaPhoto(imageselected: () {
+      handlepickImagedata().then((value) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ShowResult(selectedimage: imagepath!)));
+      });
+    });
   }
 }
 // Scaffold(

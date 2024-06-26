@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:ornamental/page/result.dart';
 import 'package:ornamental/widget/takephoto.dart';
 
@@ -16,45 +17,52 @@ class _HomePageState extends State<HomePage> {
   bool isload = false;
 
   Future<void> handlepickImagedata() async {
-    final XFile? image = await _imagePicker.pickImage(
-        source: ImageSource.gallery, imageQuality: 60);
+    if (await _requestPermissions()) {
+      final XFile? image = await _imagePicker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 60,
+      );
 
-    setState(() {
-      imagepath = image;
-    });
+      if (!mounted) return;
+
+      if (image != null) {
+        setState(() {
+          imagepath = image;
+        });
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ShowResult(selectedimage: imagepath!),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No image selected')),
+        );
+      }
+    } else {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Permissions not granted')),
+      );
+    }
+  }
+
+  Future<bool> _requestPermissions() async {
+    final statuses = await [
+      Permission.camera,
+      Permission.storage,
+    ].request();
+
+    return statuses[Permission.camera]!.isGranted &&
+        statuses[Permission.storage]!.isGranted;
   }
 
   @override
   Widget build(BuildContext context) {
     return TakeaPhoto(imageselected: () {
-      handlepickImagedata().then((value) {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ShowResult(selectedimage: imagepath!)));
-      });
+      handlepickImagedata();
     });
   }
 }
-// Scaffold(
-//       appBar: AppBar(
-//         automaticallyImplyLeading: false,
-//         title: const Text("Ornamental Recognition"),
-//       ),
-//       body: SingleChildScrollView(
-//         child: Column(
-//           children: [
-//             imagepath != null ? Image.file(File(imagepath!.path)) : Container(),
-//           ],
-//         ),
-//       ),
-//       bottomNavigationBar: SizedBox(
-//         width: MediaQuery.of(context).size.width * 0.60,
-//         height: 50,
-//         child: ElevatedButton(
-//             onPressed: () {
-//               handlepickImagedata();
-//             },
-//             child: const Text("Pick Image")),
-//       ),
-//     );

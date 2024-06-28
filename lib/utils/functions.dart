@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ornamental/widget/desccard.dart';
+import 'package:ornamental/widget/panelgraph.dart';
 
 Widget plantdescriptions(String type) {
   if (type == 'Santan') {
@@ -48,5 +49,39 @@ Widget plantdescriptions(String type) {
     );
   } else {
     return Container();
+  }
+}
+
+Widget panelGraph(String type, double widthsize) {
+  if (type == 'Santan') {
+    return Panelgraph(
+        percent: 0.50,
+        widthsize: widthsize,
+        lifespan: "234",
+        spread: "123",
+        growth: "245");
+  } else if (type == 'Lantana') {
+    return Panelgraph(
+        percent: 0.30,
+        widthsize: widthsize,
+        lifespan: "134",
+        spread: "523",
+        growth: "145");
+  } else if (type == 'Pandakaki') {
+    return Panelgraph(
+        percent: 0.60,
+        widthsize: widthsize,
+        lifespan: "334",
+        spread: "623",
+        growth: "745");
+  } else if (type == 'Blue Ternate') {
+    return Panelgraph(
+        percent: 0.80,
+        widthsize: widthsize,
+        lifespan: "834",
+        spread: "823",
+        growth: "845");
+  } else {
+    return const LoadingAnimation();
   }
 }

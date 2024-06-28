@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_tflite/flutter_tflite.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:ornamental/utils/functions.dart';
 import 'package:ornamental/widget/panelgraph.dart';
 import 'package:ornamental/widget/pantpageview.dart';
 
@@ -18,7 +19,9 @@ class _ShowResultState extends State<ShowResult> {
   late PageController _pageController;
   List? _result = [];
   bool isloading = false;
+  int? currentlabel;
   String? errorMessage;
+  String? currentLabelint;
   final ValueNotifier<int> _currentPageNotifier = ValueNotifier<int>(0);
   Future<void> loadModel() async {
     Tflite.close();
@@ -62,6 +65,18 @@ class _ShowResultState extends State<ShowResult> {
     _pageController = PageController(initialPage: 0, viewportFraction: .75);
     _pageController.addListener(() {
       _currentPageNotifier.value = _pageController.page?.round() ?? 0;
+      currentlabel = _currentPageNotifier.value;
+      _updateCurrentLabel(currentlabel!);
+    });
+  }
+
+  void _updateCurrentLabel(int currentPage) {
+    setState(() {
+      if (currentPage < _result!.length) {
+        String processedText = _result![currentPage]['label'].toString();
+        currentLabelint = processedText.replaceFirst(RegExp(r'^\d+\s*'), '');
+        debugPrint("Page $currentLabelint");
+      }
     });
   }
 
@@ -205,13 +220,16 @@ class _ShowResultState extends State<ShowResult> {
           const SizedBox(height: 10),
           PageViewPlant(
               widthsize: widthsize,
+              currentPageNotifier: _currentPageNotifier,
               pageController: _pageController,
               result: _result),
-          const SizedBox(height: 30),
-          Panelgraph(widthsize: widthsize),
+
           // ValueListenableBuilder(valueListenable: _currentPageNotifier, builder: (context, current,_){
           //   if(current)
           // })
+          currentLabelint != null
+              ? panelGraph(currentLabelint!, widthsize)
+              : const LoadingAnimation()
         ],
       ),
     );

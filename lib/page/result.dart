@@ -3,13 +3,24 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_tflite/flutter_tflite.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:ornamental/model/savefav.dart';
+import 'package:ornamental/page/savepage.dart';
 import 'package:ornamental/utils/functions.dart';
 import 'package:ornamental/widget/panelgraph.dart';
 import 'package:ornamental/widget/pantpageview.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 
 class ShowResult extends StatefulWidget {
   final XFile selectedimage;
-  const ShowResult({super.key, required this.selectedimage});
+  final File? imageselect;
+  final bool ishome;
+  const ShowResult(
+      {super.key,
+      required this.selectedimage,
+      this.imageselect,
+      required this.ishome});
 
   @override
   State<ShowResult> createState() => _ShowResultState();
@@ -22,6 +33,7 @@ class _ShowResultState extends State<ShowResult> {
   int? currentlabel;
   String? errorMessage;
   String? currentLabelint;
+  bool issaving = false;
   final ValueNotifier<int> _currentPageNotifier = ValueNotifier<int>(0);
   Future<void> loadModel() async {
     Tflite.close();
@@ -34,23 +46,20 @@ class _ShowResultState extends State<ShowResult> {
 
   Future<void> imageClassification() async {
     try {
-      if (widget.selectedimage.path.isNotEmpty) {
-        var imgClassification = await Tflite.runModelOnImage(
-            path: widget.selectedimage.path,
-            numResults: 14,
-            threshold: 0.03,
-            imageMean: 127.5,
-            imageStd: 127.5,
-            asynch: true);
-        setState(() {
-          _result = imgClassification!;
-          isloading = false;
-        });
-      } else {
-        setState(() {
-          errorMessage = "No Image Selecred";
-        });
-      }
+      var imgClassification = await Tflite.runModelOnImage(
+          path: widget.ishome == true
+              ? widget.selectedimage.path
+              : widget.imageselect!.path,
+          numResults: 14,
+          threshold: 0.03,
+          imageMean: 127.5,
+          imageStd: 127.5,
+          asynch: true);
+      setState(() {
+        _result = imgClassification!;
+        isloading = false;
+      });
+
       debugPrint("$_result");
     } catch (error) {
       debugPrint('$error');
@@ -65,13 +74,30 @@ class _ShowResultState extends State<ShowResult> {
     _pageController = PageController(initialPage: 0, viewportFraction: .75);
     _pageController.addListener(() {
       _currentPageNotifier.value = _pageController.page?.round() ?? 0;
-      currentlabel = _currentPageNotifier.value;
-      _updateCurrentLabel(currentlabel!);
+    });
+    _currentPageNotifier.addListener(() {
+      _updateCurrentLabel();
     });
   }
 
-  void _updateCurrentLabel(int currentPage) {
+  @override
+  void dispose() {
+    super.dispose();
+    _currentPageNotifier.removeListener(() {
+      _updateCurrentLabel();
+    });
+  }
+
+  void resultonlyone() {
+    if (_result!.length == 1) {
+      debugPrint("ture");
+    }
+  }
+
+  void _updateCurrentLabel() {
     setState(() {
+      int currentPage = _currentPageNotifier.value;
+      debugPrint("$currentPage");
       if (currentPage < _result!.length) {
         String processedText = _result![currentPage]['label'].toString();
         currentLabelint = processedText.replaceFirst(RegExp(r'^\d+\s*'), '');
@@ -89,10 +115,66 @@ class _ShowResultState extends State<ShowResult> {
     });
   }
 
+  Future<void> handlesave() async {
+    setState(() {
+      issaving = true;
+    });
+    var bookmarkState = Provider.of<BookmarkState>(context, listen: false);
+    try {
+      String formattedDate = DateFormat.yMMMMd().format(DateTime.now());
+      String formattedDisc = 'Save $formattedDate';
+      int randomid = generateTwoDigitRandomNumber();
+      final directory = await getApplicationDocumentsDirectory();
+      final localSaveDirectory = Directory('${directory.path}/localsave');
+      if (!await localSaveDirectory.exists()) {
+        await localSaveDirectory.create(recursive: true);
+      }
+
+      String randomLetters = generateRandomLetters(5);
+      String timestamp =
+          DateTime.now().millisecondsSinceEpoch.toString(); // Unique timestamp
+      String imagePath =
+          '${localSaveDirectory.path}/$randomLetters-$timestamp.png';
+
+      final File imageFile = File(widget.selectedimage.path);
+      await imageFile.copy(imagePath);
+      debugPrint(imagePath);
+      bookmarkState.toggleBookmark(
+        id: "${_result![0]['label']}$randomid",
+        path: imagePath,
+        title: "${_result![0]['label']}",
+        disc: formattedDisc,
+      );
+      debugPrint("save");
+      setState(() {
+        issaving = false;
+      });
+    } catch (e) {
+      debugPrint("Error saving file: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double widthsize = MediaQuery.of(context).size.width;
     return Scaffold(
+      floatingActionButton: Container(
+        height: 60,
+        width: 60,
+        padding: const EdgeInsets.all(10),
+        decoration: const BoxDecoration(
+            color: Color(0xff88B648), shape: BoxShape.circle),
+        child: IconButton(
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const SavePage()));
+            },
+            icon: const Icon(
+              Icons.bookmark_outline,
+              color: Colors.white,
+            )),
+      ),
+      extendBody: true,
       appBar: AppBar(
         backgroundColor: const Color(0xff88B648),
         automaticallyImplyLeading: false,
@@ -117,6 +199,17 @@ class _ShowResultState extends State<ShowResult> {
           //       Icons.refresh,
           //       color: Colors.white,
           //     ))
+
+          issaving == false
+              ? IconButton(
+                  onPressed: () {
+                    handlesave();
+                  },
+                  icon: const Icon(
+                    Icons.favorite_outline,
+                    color: Colors.white,
+                  ))
+              : const LoadingAnimation(),
         ],
       ),
       body: Column(

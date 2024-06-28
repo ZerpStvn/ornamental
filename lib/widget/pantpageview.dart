@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:ornamental/utils/functions.dart';
-import 'package:ornamental/widget/panelgraph.dart';
 
 class PageViewPlant extends StatefulWidget {
   const PageViewPlant({
@@ -26,7 +25,7 @@ class _PageViewPlantState extends State<PageViewPlant> {
 
   @override
   Widget build(BuildContext context) {
-    double widthsize = MediaQuery.of(context).size.width;
+    //double widthsize = MediaQuery.of(context).size.width;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(

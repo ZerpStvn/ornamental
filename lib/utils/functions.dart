@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:ornamental/widget/desccard.dart';
 import 'package:ornamental/widget/panelgraph.dart';
@@ -59,29 +61,45 @@ Widget panelGraph(String type, double widthsize) {
         widthsize: widthsize,
         lifespan: "234",
         spread: "123",
-        growth: "245");
+        growth: "245mm");
   } else if (type == 'Lantana') {
     return Panelgraph(
         percent: 0.30,
         widthsize: widthsize,
         lifespan: "134",
         spread: "523",
-        growth: "145");
+        growth: "145mm");
   } else if (type == 'Pandakaki') {
     return Panelgraph(
         percent: 0.60,
         widthsize: widthsize,
         lifespan: "334",
         spread: "623",
-        growth: "745");
+        growth: "745mm");
   } else if (type == 'Blue Ternate') {
     return Panelgraph(
         percent: 0.80,
         widthsize: widthsize,
         lifespan: "834",
         spread: "823",
-        growth: "845");
+        growth: "845mm");
   } else {
     return const LoadingAnimation();
   }
+}
+
+int generateTwoDigitRandomNumber() {
+  final random = Random();
+  return 10 + random.nextInt(90);
+}
+
+String generateRandomLetters(int length) {
+  const letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  final random = Random();
+  return String.fromCharCodes(
+    Iterable.generate(
+      length,
+      (_) => letters.codeUnitAt(random.nextInt(letters.length)),
+    ),
+  );
 }

@@ -26,16 +26,27 @@ class _HomePageState extends State<HomePage> {
       if (!mounted) return;
 
       if (image != null) {
+        // final directory = await getApplicationDocumentsDirectory();
+        // final localSaveDirectory = Directory('${directory.path}/localsave');
+        // if (!await localSaveDirectory.exists()) {
+        //   await localSaveDirectory.create(recursive: true);
+        // }
+        // final imagePath = '${localSaveDirectory.path}/my_image.png';
+        // final File imageFile = File(imagepath!.path);
+        // await imageFile.copy(imagePath);
+        // debugPrint(imagePath);
         setState(() {
           imagepath = image;
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ShowResult(
+                selectedimage: imagepath!,
+                ishome: true,
+              ),
+            ),
+          );
         });
-
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ShowResult(selectedimage: imagepath!),
-          ),
-        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('No image selected')),

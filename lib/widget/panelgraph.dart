@@ -186,7 +186,7 @@ class LoadingAnimation extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child:
-          LoadingAnimationWidget.prograssiveDots(color: Colors.green, size: 15),
+          LoadingAnimationWidget.prograssiveDots(color: Colors.green, size: 35),
     );
   }
 }

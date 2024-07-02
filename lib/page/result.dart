@@ -95,12 +95,20 @@ class _ShowResultState extends State<ShowResult> {
   }
 
   void _updateCurrentLabel() {
+    int currentPage = _currentPageNotifier.value;
     setState(() {
-      int currentPage = _currentPageNotifier.value;
-      debugPrint("$currentPage");
-      if (currentPage < _result!.length) {
-        String processedText = _result![currentPage]['label'].toString();
-        currentLabelint = processedText.replaceFirst(RegExp(r'^\d+\s*'), '');
+      debugPrint("current Page $currentPage");
+      if (_result == null || _result!.isEmpty) {
+        debugPrint("No results available.");
+        currentLabelint = "No result";
+      } else {
+        if (currentPage < _result!.length) {
+          String processedText = _result![currentPage]['label'].toString();
+          currentLabelint = processedText.replaceFirst(RegExp(r'^\d+\s*'), '');
+        } else {
+          String processedText = _result!.first['label'].toString();
+          currentLabelint = processedText.replaceFirst(RegExp(r'^\d+\s*'), '');
+        }
         debugPrint("Page $currentLabelint");
       }
     });
@@ -131,8 +139,7 @@ class _ShowResultState extends State<ShowResult> {
       }
 
       String randomLetters = generateRandomLetters(5);
-      String timestamp =
-          DateTime.now().millisecondsSinceEpoch.toString(); // Unique timestamp
+      String timestamp = DateTime.now().millisecondsSinceEpoch.toString();
       String imagePath =
           '${localSaveDirectory.path}/$randomLetters-$timestamp.png';
 
@@ -320,9 +327,9 @@ class _ShowResultState extends State<ShowResult> {
           // ValueListenableBuilder(valueListenable: _currentPageNotifier, builder: (context, current,_){
           //   if(current)
           // })
-          currentLabelint != null
+          currentLabelint != null || currentLabelint == "No result"
               ? panelGraph(currentLabelint!, widthsize)
-              : const LoadingAnimation()
+              : const Text("No Result")
         ],
       ),
     );

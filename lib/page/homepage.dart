@@ -17,45 +17,29 @@ class _HomePageState extends State<HomePage> {
   bool isload = false;
 
   Future<void> handlepickImagedata() async {
-    if (await _requestPermissions()) {
-      final XFile? image = await _imagePicker.pickImage(
-        source: ImageSource.gallery,
-        imageQuality: 60,
-      );
+    final XFile? image = await _imagePicker.pickImage(
+      source: ImageSource.camera,
+      imageQuality: 60,
+    );
 
-      if (!mounted) return;
+    if (!mounted) return;
 
-      if (image != null) {
-        // final directory = await getApplicationDocumentsDirectory();
-        // final localSaveDirectory = Directory('${directory.path}/localsave');
-        // if (!await localSaveDirectory.exists()) {
-        //   await localSaveDirectory.create(recursive: true);
-        // }
-        // final imagePath = '${localSaveDirectory.path}/my_image.png';
-        // final File imageFile = File(imagepath!.path);
-        // await imageFile.copy(imagePath);
-        // debugPrint(imagePath);
-        setState(() {
-          imagepath = image;
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ShowResult(
-                selectedimage: imagepath!,
-                ishome: true,
-              ),
+    if (image != null) {
+      setState(() {
+        imagepath = image;
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ShowResult(
+              selectedimage: imagepath!,
+              ishome: true,
             ),
-          );
-        });
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No image selected')),
+          ),
         );
-      }
+      });
     } else {
-      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Permissions not granted')),
+        const SnackBar(content: Text('No image selected')),
       );
     }
   }
@@ -68,6 +52,12 @@ class _HomePageState extends State<HomePage> {
 
     return statuses[Permission.camera]!.isGranted &&
         statuses[Permission.storage]!.isGranted;
+  }
+
+  @override
+  void initState() {
+    _requestPermissions();
+    super.initState();
   }
 
   @override

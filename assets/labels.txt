@@ -1,5 +1,4 @@
-0 Zinnia Elegans
-1 Rain Lily
-2 Mirabilis Jalapa
-3 Echeveria Flower
-4 Damask Rose
+0 Santan
+1 Lantana
+2 Pandakaki
+3 Blue Ternate

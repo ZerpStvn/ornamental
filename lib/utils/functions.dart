@@ -1,35 +1,49 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:ornamental/widget/desccard.dart';
+import 'package:ornamental/widget/panelgraph.dart';
 
 Widget plantdescriptions(String type) {
-  if (type == 'Rain Lily') {
+  if (type == 'Santan') {
     return const Descriptioncard(
-      tittle: "Rain Lily",
+      tittle: "Santan",
       description:
-          "Are you looking forward to developing a plant identification application? What are you waiting for",
-      planttype: "Herbal",
+          "Ixora coccinea is a species of flowering plant in the family Rubiaceae. It is a common flowering shrub",
+      planttype: "Shrub",
       icontype: Icon(
         Icons.spa_outlined,
         color: Colors.green,
       ),
     );
-  } else if (type == 'Zinnia Elegans') {
+  } else if (type == 'Lantana') {
     return const Descriptioncard(
-      tittle: "Zinnia Elegans",
+      tittle: "Lantana",
       description:
-          "Are you looking forward to developing a plant identification application? What are you waiting for",
-      planttype: "Unknown",
+          "Lantana is a genus of about 150 species of perennial flowering plants in the verbena family, Verbenaceae.",
+      planttype: "Shrub",
       icontype: Icon(
-        Icons.local_florist_outlined,
+        Icons.spa_outlined,
         color: Colors.green,
       ),
     );
-  } else if (type == 'Mirabilis Jalapa') {
+  } else if (type == 'Pandakaki') {
     return const Descriptioncard(
-      tittle: "Mirabilis Jalapa",
+      tittle: "Pandakaki",
       description:
-          "Are you looking forward to developing a plant identification application? What are you waiting for",
-      planttype: "Flower",
+          "Tabernaemontana pandacaqui, known as windmill bush and banana bush, is a species of plant in the dogbane family",
+      planttype: "Shrub",
+      icontype: Icon(
+        Icons.spa_outlined,
+        color: Colors.green,
+      ),
+    );
+  } else if (type == 'Blue Ternate') {
+    return const Descriptioncard(
+      tittle: "Blue Ternate",
+      description:
+          "Blue Ternate is a plant species belonging to the family Fabaceae, endemic and native to the Indonesian island",
+      planttype: "Herbal",
       icontype: Icon(
         Icons.filter_vintage_outlined,
         color: Colors.green,
@@ -38,4 +52,54 @@ Widget plantdescriptions(String type) {
   } else {
     return Container();
   }
+}
+
+Widget panelGraph(String type, double widthsize) {
+  if (type == 'Santan') {
+    return Panelgraph(
+        percent: 0.50,
+        widthsize: widthsize,
+        lifespan: "234",
+        spread: "123",
+        growth: "245mm");
+  } else if (type == 'Lantana') {
+    return Panelgraph(
+        percent: 0.30,
+        widthsize: widthsize,
+        lifespan: "134",
+        spread: "523",
+        growth: "145mm");
+  } else if (type == 'Pandakaki') {
+    return Panelgraph(
+        percent: 0.60,
+        widthsize: widthsize,
+        lifespan: "334",
+        spread: "623",
+        growth: "745mm");
+  } else if (type == 'Blue Ternate') {
+    return Panelgraph(
+        percent: 0.80,
+        widthsize: widthsize,
+        lifespan: "834",
+        spread: "823",
+        growth: "845mm");
+  } else {
+    return const LoadingAnimation();
+  }
+}
+
+int generateTwoDigitRandomNumber() {
+  final random = Random();
+  return 10 + random.nextInt(90);
+}
+
+String generateRandomLetters(int length) {
+  const letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  final random = Random();
+  return String.fromCharCodes(
+    Iterable.generate(
+      length,
+      (_) => letters.codeUnitAt(random.nextInt(letters.length)),
+    ),
+  );
 }

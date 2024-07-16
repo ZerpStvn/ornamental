@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ornamental/model/savefav.dart';
-import 'package:ornamental/page/homepage.dart';
+import 'package:ornamental/sample/home.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
                 ColorScheme.fromSeed(seedColor: const Color(0xffF69C33)),
             useMaterial3: true,
           ),
-          home: const HomePage()),
+          home: const Anotherhome()),
     );
   }
 }
